@@ -1,0 +1,46 @@
+$(document).ready(function() {
+
+$(".btn").click(  
+function() {
+console.log($(".menu").is(":visible"));
+if($(".menu").is(":visible")){
+
+$(".menu > li > ul").css({"height": "", "opacity": "0","transform": ""});
+$(".menu > li > a").text('');
+$(".menu").hide();
+$("img").hide();
+
+}else{
+$(".menu > li > a").text('Notifications');
+$(".menu > li > ul").css({"height": "auto", "opacity": "1", "padding-bottom": "40px"});
+$(".menu").show("slide", { direction: "right" }, 1000);
+$("img").show();
+}
+});
+
+$.getJSON("https://api.myjson.com/bins/vqa6q", function(json) {
+let numberOfNotifications = json.length;
+let h = $('ul').height();
+let countNotifications = 0;
+for(let i = 0; i < numberOfNotifications; i++){
+if( typeof json[i].image === "undefined"){
+	$('.menu > li > ul').append("<span id='" + json[i].id + "'><li><a href='#'>" + json[i].title + "</a></li></span>");
+}else{
+	let h = $("ul").height();
+	console.log(h);
+	$('.menu > li > ul').append("<span id='" + json[i].id + "'><li><a href='#' margin='0 auto'><img src='" + json[i].image + "' width='20px' margin='0 '>" + "&nbsp;&nbsp;&nbsp;" + json[i].title + "</a></li></span>");
+	 }
+	
+if(json[i].type != "bonus"){
+	countNotifications++;
+}
+
+$(".badge-notify").text(countNotifications);
+
+if(Number.isInteger(json[i].expires)){
+let a = json[i].id;
+setTimeout(function(){$('#' + a).remove(); countNotifications--; $(".badge-notify").text(countNotifications);},json[i].expires*1000); //added * 1000 for testing purposes
+}
+};
+});
+});
